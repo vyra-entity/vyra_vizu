@@ -28,16 +28,9 @@ fi
 echo "🔓 Configuring X11 permissions..."
 xhost +local:docker
 
-# Get vyra-network ID
-VYRA_NETWORK=$(docker network ls --filter "name=vyra-network" --format "{{.Name}}" | head -1)
-
-if [ -z "$VYRA_NETWORK" ]; then
-    echo "⚠️  Warning: vyra-network not found, using bridge network"
-    NETWORK_ARG="--network bridge"
-else
-    echo "✅ Using network: $VYRA_NETWORK"
-    NETWORK_ARG="--network $VYRA_NETWORK"
-fi
+# Use host network for ROS2 DDS communication (multicast)
+echo "📡 Using host network mode for ROS2 DDS multicast..."
+NETWORK_ARG="--network host"
 
 # Start container with X11 forwarding and network access
 echo "🚀 Starting Insight GUI container..."
@@ -46,31 +39,49 @@ docker run -it --rm \
     $NETWORK_ARG \
     --env DISPLAY=$DISPLAY \
     --env ROS_DOMAIN_ID=42 \
-    --env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp \
+    --env RMW_IMPLEMENTATION=rmw_fastrtps_cpp \
     --volume /tmp/.X11-unix:/tmp/.X11-unix:rw \
     --volume "$(pwd)":/workspace \
+    --volume "$(cd .. && pwd)/modules":/modules:ro \
     --device /dev/dri:/dev/dri \
     "$IMAGE_NAME" \
-    bash -c "source /opt/ros/kilted/setup.bash && echo '
+    bash -c "
+# Source ROS2 base
+source /opt/ros/kilted/setup.bash
+
+# Source all module interfaces
+for module_dir in /modules/v2_*/install; do
+    if [ -d \"\$module_dir\" ]; then
+        for setup_file in \"\$module_dir\"/*/local_setup.bash; do
+            if [ -f \"\$setup_file\" ]; then
+                echo \"📦 Sourcing: \$setup_file\"
+                source \"\$setup_file\"
+            fi
+        done
+    fi
+done
+
+echo '
 ╔════════════════════════════════════════════════════════════╗
 ║           VYRA Insight GUI - ROS2 Visualization            ║
 ╔════════════════════════════════════════════════════════════╗
 ║                                                            ║
 ║  ROS2 Commands:                                            ║
-║    ros2 node list           - List all ROS2 nodes         ║
-║    ros2 topic list          - List all topics             ║
-║    ros2 service list        - List all services           ║
-║    ros2 topic echo <topic>  - Monitor topic messages      ║
+║    ros2 node list           - List all ROS2 nodes          ║
+║    ros2 topic list          - List all topics              ║
+║    ros2 service list        - List all services            ║
+║    ros2 topic echo <topic>  - Monitor topic messages       ║
 ║                                                            ║
 ║  GUI Tools:                                                ║
 ║    rqt                      - Start RQT GUI                ║
-║    rqt_graph               - Node graph visualization     ║
-║    rqt_console             - Log console                  ║
-║    rviz2                   - 3D visualization             ║
+║    rqt_graph               - Node graph visualization      ║
+║    rqt_console             - Log console                   ║
+║    rviz2                   - 3D visualization              ║
 ║                                                            ║
 ║  Type exit to quit                                         ║
 ╚════════════════════════════════════════════════════════════╝
-' && bash"
+'
+bash"
 
 # Restore X11 permissions
 echo "🔒 Restoring X11 permissions..."
