@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     x11-apps \
     mesa-utils \
-    libgl1-mesa-glx \
+    libgl1 \
     libgl1-mesa-dri \
     && rm -rf /var/lib/apt/lists/*
 
