@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
+  <Domain id="42">
+    <General>
+      <!-- Automatic interface selection, prefer non-loopback -->
+      <NetworkInterfaceAddress>auto</NetworkInterfaceAddress>
+      
+      <!-- Allow multicast for discovery -->
+      <AllowMulticast>true</AllowMulticast>
+      
+      <!-- Enable shared memory transport for same-host communication -->
+      <Transport>default</Transport>
+    </General>
+    
+    <Discovery>
+      <!-- Participant index for unique identification -->
+      <ParticipantIndex>auto</ParticipantIndex>
+      
+      <!-- Multicast discovery for automatic peer detection -->
+      <EnableMulticastLoopback>true</EnableMulticastLoopback>
+      
+      <!-- Discovery ports (7400 + Domain*250 = 17900 base port) -->
+      <Peers>
+        <Peer address="239.255.0.1"/>
+      </Peers>
+    </Discovery>
+    
+    <Tracing>
+      <!-- Logging configuration -->
+      <Verbosity>warning</Verbosity>
+      <OutputFile>stdout</OutputFile>
+    </Tracing>
+  </Domain>
+</CycloneDDS>
