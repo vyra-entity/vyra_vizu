@@ -51,7 +51,7 @@ docker run -it --rm \
     --volume "$(pwd)":/workspace \
     --device /dev/dri:/dev/dri \
     "$IMAGE_NAME" \
-    bash -c "source /opt/ros/jazzy/setup.bash && echo '
+    bash -c "source /opt/ros/kilted/setup.bash && echo '
 ╔════════════════════════════════════════════════════════════╗
 ║           VYRA Insight GUI - ROS2 Visualization            ║
 ╔════════════════════════════════════════════════════════════╗

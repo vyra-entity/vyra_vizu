@@ -1,14 +1,14 @@
 # ==============================================================================
 # Insight GUI - ROS2 Visualization Tool
 # ==============================================================================
-FROM osrf/ros:jazzy-desktop-full
+FROM osrf/ros:kilted-desktop-full
 
 # Install additional tools
 RUN apt-get update && apt-get install -y \
-    ros-jazzy-rqt* \
-    ros-jazzy-rviz2 \
-    ros-jazzy-cyclonedds \
-    ros-jazzy-rmw-cyclonedds-cpp \
+    ros-kilted-rqt* \
+    ros-kilted-rviz2 \
+    ros-kilted-cyclonedds \
+    ros-kilted-rmw-cyclonedds-cpp \
     python3-pip \
     x11-apps \
     mesa-utils \
@@ -29,7 +29,7 @@ RUN mkdir -p /config
 COPY cyclonedds.xml /config/cyclonedds.xml
 
 # Source ROS2 setup in bashrc
-RUN echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc
+RUN echo "source /opt/ros/kilted/setup.bash" >> /root/.bashrc
 
 WORKDIR /workspace
 
