@@ -1,0 +1,21 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'vyra-production'
+
+scrape_configs:
+  # Container Managers
+  - job_name: 'container_managers'
+    static_configs:
+      - targets:
+          - 'container_manager:8080'
+        labels:
+          node: 'default-node'
+          role: 'manager'
+    
+  # v2_modulemanager
+  - job_name: 'v2_modulemanager'
+    static_configs:
+      - targets:
+          - 'v2_modulemanager:8000'
