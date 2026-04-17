@@ -4,7 +4,7 @@
 FROM osrf/ros:kilted-desktop-full
 
 # Install additional tools
-RUN apt-get update && apt-get install -y \
+RUN apt-get update -o Acquire::ForceIPv4=true && apt-get install -o Acquire::ForceIPv4=true -y \
     ros-kilted-rqt* \
     ros-kilted-rviz2 \
     ros-kilted-cyclonedds \
